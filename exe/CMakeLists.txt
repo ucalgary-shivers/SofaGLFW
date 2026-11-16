@@ -23,6 +23,10 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} Sofa.Simulation.Core Sofa.GUI.Common SofaGLFW)
 target_include_directories(${PROJECT_NAME} PRIVATE extlibs/cxxopts-2.2.1/include)
 
+if(EMSCRIPTEN)
+    target_link_options(${PROJECT_NAME} PUBLIC --embed-file ${CMAKE_SOURCE_DIR}/examples/Demos/caduceus.scn@Demos/caduceus.scn)
+endif()
+
 sofa_add_targets_to_package(
     PACKAGE_NAME Sofa.GUI
     TARGETS ${PROJECT_NAME} AUTO_SET_TARGET_PROPERTIES
