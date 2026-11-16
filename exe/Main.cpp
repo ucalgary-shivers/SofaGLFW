@@ -21,6 +21,7 @@
 ******************************************************************************/
 #include <sofa/config.h>
 
+#include <algorithm>
 #include <cxxopts.hpp>
 #include <SofaGLFW/SofaGLFWBaseGUI.h>
 

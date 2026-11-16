@@ -12,7 +12,7 @@ sofa_find_package(Sofa.Component.Playback REQUIRED)
 
 sofa_find_package(SoftRobots REQUIRED)
 sofa_find_package(SoftRobots.Inverse REQUIRED)
-sofa_find_package(SofaPython3 REQUIRED)
+sofa_find_package(SofaPython3 QUIET)
 sofa_find_package(TinyXML2 REQUIRED)
 
 
@@ -38,8 +38,8 @@ if(TARGET nfd::nfd)
 else()
     message("nativefiledialog-extended not found, fetching source code...")
     FetchContent_Declare(nfd
-            GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended
-            GIT_TAG        v1.2.1
+            GIT_REPOSITORY https://github.com/ucalgary-shivers/nativefiledialog-extended
+            GIT_TAG        emscripten
     )
     set(NFD_INSTALL ON CACHE INTERNAL "")
     
@@ -278,7 +278,9 @@ if(ROS_FOUND AND SOFAIMGUI_WITH_ROS)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${ROS_LIBRARIES})
 endif(ROS_FOUND AND SOFAIMGUI_WITH_ROS)
 
-add_subdirectory(bindings)
+if(SofaPython3_FOUND)
+    add_subdirectory(bindings)
+endif()
 
 sofa_create_package_with_targets(
     PACKAGE_NAME ${PROJECT_NAME}
