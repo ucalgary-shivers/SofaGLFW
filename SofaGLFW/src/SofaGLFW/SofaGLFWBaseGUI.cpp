@@ -50,6 +50,8 @@
 #include <sofa/helper/system/FileSystem.h>
 #include <sofa/helper/Utils.h>
 
+#include <sofa/gl/glu.h>
+
 #include <algorithm>
 #include <map>
 
@@ -228,6 +230,7 @@ void SofaGLFWBaseGUI::changeCamera(sofa::component::visual::BaseCamera::SPtr new
 
 void SofaGLFWBaseGUI::setWindowIcon(GLFWwindow* glfwWindow)
 {
+    #ifndef __EMSCRIPTEN__
     //STBImage relies on DataRepository to find files: it must be extended with the resource files from this plugin
     sofa::helper::system::DataRepository.addFirstPath(SOFAGLFW_RESOURCES_DIR);
 
@@ -238,9 +241,10 @@ void SofaGLFWBaseGUI::setWindowIcon(GLFWwindow* glfwWindow)
         images[0].height = img.getHeight();
         images[0].width = img.getWidth();
         images[0].pixels = img.getPixels();
-        glfwSetWindowIcon(glfwWindow, 1, images);
+        glfwSetWindowIcon(glfwWindow, 1, images); // not implemented for Emscripten
     }
     sofa::helper::system::DataRepository.removePath(SOFAGLFW_RESOURCES_DIR);
+    #endif
 }
 
 bool SofaGLFWBaseGUI::createWindow(int width, int height, const char* title, bool fullscreenAtStartup)
@@ -283,7 +287,9 @@ bool SofaGLFWBaseGUI::createWindow(int width, int height, const char* title, boo
         glfwSetCursorPosCallback(glfwWindow, cursor_position_callback);
         glfwSetMouseButtonCallback(glfwWindow, mouse_button_callback);
         glfwSetScrollCallback(glfwWindow, scroll_callback);
+        #ifndef __EMSCRIPTEN__
         glfwSetWindowCloseCallback(glfwWindow, close_callback);
+        #endif
         glfwSetWindowPosCallback(glfwWindow, window_pos_callback);
 
         // this set empty callbacks
@@ -504,7 +510,9 @@ std::size_t SofaGLFWBaseGUI::runLoop(std::size_t targetNbIterations)
                         m_videoRecorderFFMPEG.addFrame(pixels.data(), width, height);
                     }
 
+                    #ifndef __EMSCRIPTEN__
                     glfwSwapBuffers(glfwWindow);
+                    #endif
                 }
                 else
                 {
