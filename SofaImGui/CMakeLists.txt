@@ -38,8 +38,8 @@ if(TARGET nfd::nfd)
 else()
     message("nativefiledialog-extended not found, fetching source code...")
     FetchContent_Declare(nfd
-            GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended
-            GIT_TAG        v1.2.1
+            GIT_REPOSITORY https://github.com/ucalgary-shivers/nativefiledialog-extended
+            GIT_TAG        emscripten
     )
     set(NFD_INSTALL ON CACHE INTERNAL "")
     
