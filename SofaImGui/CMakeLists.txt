@@ -42,6 +42,9 @@ else()
             GIT_TAG        emscripten
     )
     set(NFD_INSTALL ON CACHE INTERNAL "")
+    if(EMSCRIPTEN)
+        set(NFD_EMSCRIPTEN_ASYNC "JSPI" CACHE INTERNAL "")
+    endif()
     
     FetchContent_MakeAvailable(nfd)
     set_property(TARGET nfd  PROPERTY POSITION_INDEPENDENT_CODE ON)
