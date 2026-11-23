@@ -11,31 +11,33 @@ sofa_find_package(Sofa.GUI.Common QUIET)
 
 include(FetchContent)
 
-sofa_find_package(glfw3 CONFIG QUIET)
+if(NOT EMSCRIPTEN)
+    sofa_find_package(glfw3 CONFIG QUIET)
 
-if(TARGET glfw)
-    if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-        sofa_install_libraries(TARGETS glfw)
-    endif()
-else()
-    message("glfw3 not found, fetching source code...")
-    FetchContent_Declare(glfw
+    if(TARGET glfw)
+        if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+            sofa_install_libraries(TARGETS glfw)
+        endif()
+    else()
+        message("glfw3 not found, fetching source code...")
+        FetchContent_Declare(glfw
             GIT_REPOSITORY https://github.com/glfw/glfw
             GIT_TAG        3.3.10
             # GIT_TAG        3.4 # Wayland, at the moment, does not support getting/setting window positions.
-    )
+        )
 
-    FetchContent_GetProperties(glfw)
-    if(NOT glfw_POPULATED)
-        FetchContent_Populate(glfw)
+        FetchContent_GetProperties(glfw)
+        if(NOT glfw_POPULATED)
+            FetchContent_Populate(glfw)
 
-        set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the GLFW example programs")
-        set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "Build the GLFW test programs")
-        set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "Build the GLFW documentation")
-        set(GLFW_INSTALL ON CACHE INTERNAL "Generate installation target")
-        set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build GLFW as a shared library")
+            set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the GLFW example programs")
+            set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "Build the GLFW test programs")
+            set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "Build the GLFW documentation")
+            set(GLFW_INSTALL ON CACHE INTERNAL "Generate installation target")
+            set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build GLFW as a shared library")
 
-        add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
+            add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
+        endif()
     endif()
 endif()
 
@@ -67,11 +69,16 @@ endif()
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Sofa.GL Sofa.Simulation.Common Sofa.Component.Visual)
-target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
-target_include_directories(${PROJECT_NAME} PUBLIC 
-    $<BUILD_INTERFACE:${glfw_SOURCE_DIR}/include>  
-    $<INSTALL_INTERFACE:include>
-)
+if(EMSCRIPTEN)
+    target_compile_options(${PROJECT_NAME} PUBLIC "--use-port=contrib.glfw3")
+    target_link_options(${PROJECT_NAME} PUBLIC "--use-port=contrib.glfw3")
+else()
+    target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        $<BUILD_INTERFACE:${glfw_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+endif()
 
 if(Sofa.GUI.Common_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC Sofa.GUI.Common)

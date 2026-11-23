@@ -36,6 +36,7 @@ extern "C" {
     SOFAIMGUI_API const char* getModuleLicense();
     SOFAIMGUI_API const char* getModuleDescription();
     SOFAIMGUI_API const char* getModuleComponentList();
+    SOFAIMGUI_API void registerObjects(sofa::core::ObjectFactory* factory);
 }
 
 void init()
@@ -75,6 +76,11 @@ const char* getModuleDescription()
 void initExternalModule()
 {
     init();
+}
+
+void registerObjects(sofa::core::ObjectFactory* factory)
+{
+
 }
 
 } // namespace sofaimgui
