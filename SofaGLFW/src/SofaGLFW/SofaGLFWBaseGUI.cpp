@@ -405,7 +405,9 @@ void SofaGLFWBaseGUI::switchFullScreen(GLFWwindow* glfwWindow, unsigned int /* s
         }
         else
         {
+            #ifndef __EMSCRIPTEN__
             glfwSetWindowAttrib(glfwWindow, GLFW_DECORATED, GLFW_TRUE);
+            #endif
             glfwSetWindowMonitor(glfwWindow, nullptr, m_lastWindowPositionX, m_lastWindowPositionY, m_lastWindowWidth, m_lastWindowHeight, GLFW_DONT_CARE);
         }
     }
@@ -450,7 +452,9 @@ void SofaGLFWBaseGUI::setWindowTitle(GLFWwindow* window, const char* title)
 void SofaGLFWBaseGUI::makeCurrentContext(GLFWwindow* glfwWindow)
 {
     glfwMakeContextCurrent(glfwWindow);
+    // #ifndef __EMSCRIPTEN__
     glfwSwapInterval( 0 ); //request disabling vsync
+    // #endif
     if (!m_bGlewIsInitialized)
     {
         glewInit();
